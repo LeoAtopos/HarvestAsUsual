@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 using TMPro;
-using System;
+//using System;
 
 public class HarvestGameController : MonoBehaviour
 {
@@ -216,6 +216,8 @@ public class HarvestGameController : MonoBehaviour
     }
     private void SummerFiledShowUp()
     {
+        SeedlingCut();
+
         state = "Water";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -402,7 +404,7 @@ public class HarvestGameController : MonoBehaviour
                 }
                 else
                 {
-                    SceneManager.LoadScene("EndOfStarve");
+                    EndOfStarve();
                     break;
                 }
             }
@@ -448,5 +450,23 @@ public class HarvestGameController : MonoBehaviour
     void EndOfStay()
     {
         SceneManager.LoadScene("EndOfStay");
+    }
+    void EndOfStarve()
+    {
+        SceneManager.LoadScene("EndOfStarve");
+    }
+    void SeedlingCut()
+    {
+        int seedNum = cropList.Count;
+        int seedKilled = (int)Random.Range(1, (int)(seedNum * 0.2f));
+        List<GameObject> cropToBeKilledList = new List<GameObject>();
+        int i = 0;
+        while (i < seedKilled)
+        {
+            GameObject g =  cropList[i];
+            cropList.Remove(g);
+            g.SetActive(false);
+            i++;
+        }
     }
 }
