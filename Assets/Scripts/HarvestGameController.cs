@@ -31,6 +31,8 @@ public class HarvestGameController : MonoBehaviour
     public TextMeshProUGUI gainText;
 
     public List<Image> cropSpriteList;
+    public List<GameObject> family;
+    public GameObject familyHandle;
     public GameObject farmer;
     public GameObject wife;
     public GameObject kid1;
@@ -68,11 +70,18 @@ public class HarvestGameController : MonoBehaviour
     {
         money = 100;
         gain = 0;
-        cropPrice = 1;
+        cropPrice = 0.1f;
         gainPerCropBase = 50;
         moneyConsumePerPeepPerYear = 100;
         rentPrice = 500;
         peepNum = 5;
+
+        family = new List<GameObject>();
+        family.Add(farmer);
+        family.Add(wife);
+        family.Add(kid1);
+        family.Add(kid2);
+        family.Add(kid3);
 
         InitCropSpriteList();
         ShowSpringWord();
@@ -115,7 +124,6 @@ public class HarvestGameController : MonoBehaviour
             }
         }
         moneyText.text = money.ToString();
-        
         gainText.text = gain.ToString();
     }
     void ShowSpringWord()
@@ -126,11 +134,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(false);
-        wife.SetActive(false);
-        kid1.SetActive(false);
-        kid2.SetActive(false);
-        kid3.SetActive(false);
+        familyHandle.SetActive(false);
         words.SetActive(true);
         words.GetComponent<Image>().sprite = springWord;
         merchant.SetActive(false);
@@ -147,11 +151,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = springWord;
         merchant.SetActive(false);
@@ -169,11 +169,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = springWord;
         merchant.SetActive(false);
@@ -192,11 +188,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
         foreach (Image i in cropSpriteList) i.sprite = transparent;
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = springWord;
         merchant.SetActive(false);
@@ -213,11 +205,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(false);
-        wife.SetActive(false);
-        kid1.SetActive(false);
-        kid2.SetActive(false);
-        kid3.SetActive(false);
+        familyHandle.SetActive(false);
         words.SetActive(true);
         words.GetComponent<Image>().sprite = summerWord;
         merchant.SetActive(false);
@@ -235,11 +223,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
         foreach (Image i in cropSpriteList) i.sprite = seedling;
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = summerWord;
         merchant.SetActive(false);
@@ -258,11 +242,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
         foreach (Image i in cropSpriteList) i.sprite = grown;
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = summerWord;
         merchant.SetActive(false);
@@ -280,11 +260,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = summerWord;
         merchant.SetActive(false);
@@ -301,11 +277,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(false);
-        wife.SetActive(false);
-        kid1.SetActive(false);
-        kid2.SetActive(false);
-        kid3.SetActive(false);
+        familyHandle.SetActive(false);
         words.SetActive(true);
         words.GetComponent<Image>().sprite = autumnWord;
         merchant.SetActive(false);
@@ -323,11 +295,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
         foreach (Image i in cropSpriteList) i.sprite = fullgrown;
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         words.GetComponent<Image>().sprite = autumnWord;
         merchant.SetActive(false);
@@ -351,11 +319,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(true);
         merchantLineText.text = cropPrice.ToString() + "$";
@@ -377,11 +341,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(false);
@@ -397,11 +357,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(false);
-        wife.SetActive(false);
-        kid1.SetActive(false);
-        kid2.SetActive(false);
-        kid3.SetActive(false);
+        familyHandle.SetActive(false);
         words.SetActive(true);
         words.GetComponent<Image>().sprite = winterWord;
         merchant.SetActive(false);
@@ -418,11 +374,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(false);
@@ -433,19 +385,35 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void SurviveDone()
     {
-        money -= peepNum * moneyConsumePerPeepPerYear;
-
+        int i = 0;
+        while(i < family.Count)
+        {
+            if(money >= moneyConsumePerPeepPerYear)
+            {
+                money -= moneyConsumePerPeepPerYear;
+                i++;
+            }
+            else
+            {
+                if(i>0)
+                {
+                    family[i].SetActive(false);
+                    family.Remove(family[i]);
+                }
+                else
+                {
+                    SceneManager.LoadScene("EndOfStarve");
+                    break;
+                }
+            }
+        }
         state = "Rent";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(true);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(true);
@@ -458,6 +426,10 @@ public class HarvestGameController : MonoBehaviour
     internal void RentDone()
     {
         money -= rentPrice;
+        if(money < 0)
+        {
+            EndOfStay();
+        }
 
         state = "WinterDone";
         statsBoard.SetActive(true);
@@ -465,16 +437,16 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
-        farmer.SetActive(true);
-        wife.SetActive(true);
-        kid1.SetActive(true);
-        kid2.SetActive(true);
-        kid3.SetActive(true);
+        familyHandle.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(false);
         grasshandler.SetActive(false);
         cropsTile.SetActive(false);
         action.SetActive(false);
+    }
+    void EndOfStay()
+    {
+        SceneManager.LoadScene("EndOfStay");
     }
 }
