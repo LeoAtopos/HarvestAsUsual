@@ -18,7 +18,17 @@ public class HarvestGameController : MonoBehaviour
     public GameObject crops;
     public List<GameObject> cropList;
 
-    
+    public int money = 1000;
+    public int gain = 0;
+    public float cropPrice = 1;
+    public int gainPerCropBase = 50;
+    public int moneyConsumePerPeepPerYear = 100;
+    public int rentPrice = 500;
+    public int peepNum = 5;
+
+    public GameObject statsBoard;
+    public TextMeshProUGUI moneyText;
+    public TextMeshProUGUI gainText;
 
     public List<Image> cropSpriteList;
     public GameObject farmer;
@@ -28,7 +38,9 @@ public class HarvestGameController : MonoBehaviour
     public GameObject kid3;
     public GameObject words;
     public GameObject merchant;
+    public TextMeshProUGUI merchantLineText;
     public GameObject landLord;
+    public TextMeshProUGUI landLordLineText;
     public GameObject cropsTile;
 
     public Sprite transparent;
@@ -54,6 +66,14 @@ public class HarvestGameController : MonoBehaviour
     }
     void Start()
     {
+        money = 100;
+        gain = 0;
+        cropPrice = 1;
+        gainPerCropBase = 50;
+        moneyConsumePerPeepPerYear = 100;
+        rentPrice = 500;
+        peepNum = 5;
+
         InitCropSpriteList();
         ShowSpringWord();
     }
@@ -93,12 +113,15 @@ public class HarvestGameController : MonoBehaviour
                 default:
                     break;
             }
-            
         }
+        moneyText.text = money.ToString();
+        
+        gainText.text = gain.ToString();
     }
     void ShowSpringWord()
     {
         state = "SpringWord";
+        statsBoard.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -119,6 +142,7 @@ public class HarvestGameController : MonoBehaviour
     void SpringFiledShowUp()
     {
         state = "Plough";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -140,6 +164,7 @@ public class HarvestGameController : MonoBehaviour
     public void PloughDone()
     {
         state = "Sow";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -161,6 +186,7 @@ public class HarvestGameController : MonoBehaviour
     internal void SowDone()
     {
         state = "SpringDone";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -182,6 +208,7 @@ public class HarvestGameController : MonoBehaviour
     void ShowSummerWord()
     {
         state = "SummerWord";
+        statsBoard.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -202,6 +229,7 @@ public class HarvestGameController : MonoBehaviour
     private void SummerFiledShowUp()
     {
         state = "Water";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -224,6 +252,7 @@ public class HarvestGameController : MonoBehaviour
     internal void WaterDone()
     {
         state = "Weed";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -246,6 +275,7 @@ public class HarvestGameController : MonoBehaviour
     internal void WeedDone()
     {
         state = "SummerDone";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -266,6 +296,7 @@ public class HarvestGameController : MonoBehaviour
     void ShowAutumnWord()
     {
         state = "AutumnWord";
+        statsBoard.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -286,6 +317,7 @@ public class HarvestGameController : MonoBehaviour
     private void AutumnFiledShowUp()
     {
         state = "Harvest";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -307,7 +339,14 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void HarvestDone()
     {
+        int gainHarvest = 0;
+        foreach(GameObject g in cropList)
+        {
+            gainHarvest += gainPerCropBase;
+        }
+        gain += gainHarvest;
         state = "Sell";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -319,6 +358,7 @@ public class HarvestGameController : MonoBehaviour
         kid3.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(true);
+        merchantLineText.text = cropPrice.ToString() + "$";
         landLord.SetActive(false);
         grasshandler.SetActive(false);
         cropsTile.SetActive(true);
@@ -328,7 +368,11 @@ public class HarvestGameController : MonoBehaviour
 
     internal void SellDone()
     {
+        money += (int)(gain * cropPrice);
+        gain = 0;
+        
         state = "AutumnDone";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -348,6 +392,7 @@ public class HarvestGameController : MonoBehaviour
     void ShowWinterWord()
     {
         state = "WinterWord";
+        statsBoard.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -368,6 +413,7 @@ public class HarvestGameController : MonoBehaviour
     private void WinterFiledShowUp()
     {
         state = "Survive";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -387,7 +433,10 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void SurviveDone()
     {
+        money -= peepNum * moneyConsumePerPeepPerYear;
+
         state = "Rent";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(true);
@@ -400,6 +449,7 @@ public class HarvestGameController : MonoBehaviour
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(true);
+        landLordLineText.text = rentPrice.ToString() + "$";
         grasshandler.SetActive(false);
         cropsTile.SetActive(false);
         action.SetActive(true);
@@ -407,7 +457,10 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void RentDone()
     {
+        money -= rentPrice;
+
         state = "WinterDone";
+        statsBoard.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
