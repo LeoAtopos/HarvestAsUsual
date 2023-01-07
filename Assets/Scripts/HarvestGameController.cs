@@ -31,6 +31,7 @@ public class HarvestGameController : MonoBehaviour
     public GameObject landLord;
     public GameObject cropsTile;
 
+    public Sprite transparent;
     public Sprite seedling;
     public Sprite grown;
     public Sprite fullgrown;
@@ -60,25 +61,39 @@ public class HarvestGameController : MonoBehaviour
     {
         foreach(GameObject g in cropList)
         {
-            cropSpriteList.Add(g.GetComponentInChildren<Image>());
+            cropSpriteList.Add(g.transform.GetChild(0).GetComponent<Image>());
         }
         foreach(Image i in cropSpriteList)
         {
-            i.sprite = null;
+            i.sprite = transparent;
         }
     }
     void Update()
     {
-        if(Input.GetMouseButton(0))
+        if(Input.GetMouseButtonDown(0))
         {
-            if (state == "SpringWord") SpringFiledShowUp();
-            if (state == "SpringDone") ShowSummerWord();
-            if (state == "SummerWord") SummerFiledShowUp();
-            if (state == "SummerDone") ShowAutumnWord();
-            if (state == "AutumnWord") AutumnFiledShowUp();
-            if (state == "AutumnDone") ShowWinterWord();
-            if (state == "WinterWord") WinterFiledShowUp();
-            if (state == "WinterDone") ShowSpringWord();
+            switch(state)
+            {
+                case "SpringWord":
+                    SpringFiledShowUp(); break;
+                case "SpringDone":
+                    ShowSummerWord(); break;
+                case "SummerWord":
+                    SummerFiledShowUp(); break;
+                case "SummerDone":
+                    ShowAutumnWord(); break;
+                case "AutumnWord":
+                    AutumnFiledShowUp(); break;
+                case "AutumnDone":
+                    ShowWinterWord(); break;
+                case "WinterWord":
+                    WinterFiledShowUp(); break;
+                case "WinterDone":
+                    ShowSpringWord(); break;
+                default:
+                    break;
+            }
+            
         }
     }
     void ShowSpringWord()
@@ -150,6 +165,7 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
         crops.SetActive(true);
+        foreach (Image i in cropSpriteList) i.sprite = transparent;
         farmer.SetActive(true);
         wife.SetActive(true);
         kid1.SetActive(true);
@@ -253,7 +269,7 @@ public class HarvestGameController : MonoBehaviour
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
-        crops.SetActive(true);
+        crops.SetActive(false);
         farmer.SetActive(false);
         wife.SetActive(false);
         kid1.SetActive(false);
@@ -335,7 +351,7 @@ public class HarvestGameController : MonoBehaviour
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
-        crops.SetActive(true);
+        crops.SetActive(false);
         farmer.SetActive(false);
         wife.SetActive(false);
         kid1.SetActive(false);

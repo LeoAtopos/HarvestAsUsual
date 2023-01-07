@@ -4469,6 +4469,7 @@ MonoBehaviour:
   merchant: {fileID: 2114570039}
   landLord: {fileID: 411433059}
   cropsTile: {fileID: 1146862472}
+  transparent: {fileID: 21300000, guid: 617813d46cc6d4f3ea0b6d92a2a3d9c1, type: 3}
   seedling: {fileID: 21300000, guid: 8d484b8fd518947f59762182ade99125, type: 3}
   grown: {fileID: 21300000, guid: b93a3b10b837d44168bd0677834db858, type: 3}
   fullgrown: {fileID: 21300000, guid: 98ef2b921c9a44833be79389f05a8562, type: 3}
@@ -4491,6 +4492,7 @@ MonoBehaviour:
   - {fileID: 1812792609}
   - {fileID: 244486280}
   action: {fileID: 1652050586}
+  state: 
 --- !u!1 &1732802347
 GameObject:
   m_ObjectHideFlags: 0
