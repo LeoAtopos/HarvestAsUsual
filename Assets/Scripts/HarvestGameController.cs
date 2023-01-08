@@ -10,7 +10,16 @@ using TMPro;
 public class HarvestGameController : MonoBehaviour
 {
     private static HarvestGameController instance;
+
+    internal void Restart()
+    {
+        Start();
+    }
+
     public static HarvestGameController Instance{get => instance;}
+
+    public GameObject endPanel;
+    public TextMeshProUGUI endLineText;
 
     public GameObject fieldBase;
     public GameObject fieldDone;
@@ -74,20 +83,32 @@ public class HarvestGameController : MonoBehaviour
     public GameObject action;
     public string state;
 
+    public GameObject skillboard;
+    public GameObject skillRemoveFamily;
+
+    public AudioSource flickSound;
+
     void Awake()
     {
         instance = this;
     }
     void Start()
     {
+        endPanel.SetActive(false);
         money = 100;
         gain = 0;
         cropPrice = 1f;
         gainPerCropBase = 50;
         moneyConsumePerPeepPerYear = 100;
-        rentPrice = 500;
+        rentPrice = 600;
         peepNum = 5;
         cropNum = cropList.Count;
+
+        kid3.SetActive(true); kid3NeedText.enabled = true;
+        kid2.SetActive(true); kid2NeedText.enabled = true;
+        kid1.SetActive(true); kid1NeedText.enabled = true;
+        wife.SetActive(true); wifeNeedText.enabled = true;
+        farmer.SetActive(true); farmerNeedText.enabled = true;
 
         family = new List<GameObject>();
         family.Add(farmer);
@@ -95,6 +116,7 @@ public class HarvestGameController : MonoBehaviour
         family.Add(kid1);
         family.Add(kid2);
         family.Add(kid3);
+
 
         farmerNeed = -100;
         wifeNeed = -100;
@@ -155,6 +177,7 @@ public class HarvestGameController : MonoBehaviour
 }
     void ShowSpringWord()
     {
+        skillboard.SetActive(false);
         state = "SpringWord";
         statsBoard.SetActive(false);
         fieldBase.SetActive(false);
@@ -176,6 +199,7 @@ public class HarvestGameController : MonoBehaviour
     }
     void SpringFiledShowUp()
     {
+        skillboard.SetActive(true);
         state = "Plough";
         statsBoard.SetActive(true);
         fieldBase.SetActive(true);
@@ -194,6 +218,8 @@ public class HarvestGameController : MonoBehaviour
     }
     public void PloughDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         state = "Sow";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -212,6 +238,8 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void SowDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         state = "SpringDone";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -230,6 +258,7 @@ public class HarvestGameController : MonoBehaviour
     }
     void ShowSummerWord()
     {
+        skillboard.SetActive(false);
         state = "SummerWord";
         statsBoard.SetActive(false);
         fieldBase.SetActive(false);
@@ -247,6 +276,7 @@ public class HarvestGameController : MonoBehaviour
     }
     private void SummerFiledShowUp()
     {
+        skillboard.SetActive(true);
         SeedlingCut();
 
         state = "Water";
@@ -268,6 +298,8 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void WaterDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         state = "Weed";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -287,6 +319,8 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void WeedDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         state = "SummerDone";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -304,6 +338,7 @@ public class HarvestGameController : MonoBehaviour
     }
     void ShowAutumnWord()
     {
+        skillboard.SetActive(false);
         state = "AutumnWord";
         statsBoard.SetActive(false);
         fieldBase.SetActive(false);
@@ -321,6 +356,7 @@ public class HarvestGameController : MonoBehaviour
     }
     private void AutumnFiledShowUp()
     {
+        skillboard.SetActive(true);
         state = "Harvest";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -340,6 +376,8 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void HarvestDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         gain += gainPerCropBase * cropNum;
         state = "Sell";
         statsBoard.SetActive(true);
@@ -361,6 +399,8 @@ public class HarvestGameController : MonoBehaviour
 
     internal void SellDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
         money += (int)(gain * cropPrice);
         gain = 0;
         
@@ -380,6 +420,7 @@ public class HarvestGameController : MonoBehaviour
     }
     void ShowWinterWord()
     {
+        skillboard.SetActive(false);
         state = "WinterWord";
         statsBoard.SetActive(false);
         fieldBase.SetActive(false);
@@ -397,6 +438,7 @@ public class HarvestGameController : MonoBehaviour
     }
     private void WinterFiledShowUp()
     {
+        skillboard.SetActive(true);
         state = "Survive";
         statsBoard.SetActive(true);
         fieldBase.SetActive(true);
@@ -415,39 +457,31 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void SurviveDone()
     {
-        //int i = 0;
-        //while(i < family.Count)
-        //{
-        //    if(money >= moneyConsumePerPeepPerYear)
-        //    {
-        //        money -= moneyConsumePerPeepPerYear;
-        //        i++;
-        //    }
-        //    else
-        //    {
-        //        if(i>0)
-        //        {
-        //            family[i].SetActive(false);
-        //            family.Remove(family[i]);
-        //        }
-        //        else
-        //        {
-        //            EndOfStarve();
-        //            break;
-        //        }
-        //    }
-        //}
+        skillboard.SetActive(true);
+        flickSound.Play();
 
         if (money + farmerNeed >= 0) money += farmerNeed;
         else EndOfStarve();
-        if (money + wifeNeed >= 0) money += wifeNeed;
-        else { wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); };
-        if (money + kid1Need >= 0) money += kid1Need;
-        else { kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); };
-        if (money + kid2Need >= 0) money += kid2Need;
-        else { kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); };
-        if (money + kid3Need >= 0) money += kid3Need;
-        else { kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); };
+        if(wife.activeSelf)
+        {
+            if (money + wifeNeed >= 0) money += wifeNeed;
+            else { wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); peepNum--; };
+        }
+        if(kid1.activeSelf)
+        {
+            if (money + kid1Need >= 0 && kid1.activeSelf) money += kid1Need;
+            else { kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; };
+        }
+        if(kid2.activeSelf)
+        {
+            if (money + kid2Need >= 0 && kid2.activeSelf) money += kid2Need;
+            else { kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); peepNum--; };
+        }
+        if(kid3.activeSelf)
+        {
+            if (money + kid3Need >= 0 && kid3.activeSelf) money += kid3Need;
+            else { kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); peepNum--; };
+        }
 
         state = "Rent";
         statsBoard.SetActive(true);
@@ -468,10 +502,13 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void RentDone()
     {
+        skillboard.SetActive(true);
+        flickSound.Play();
+
         money -= rentPrice;
         if(money < 0)
         {
-            EndOfStay();
+            EndOfStray();
         }
 
         state = "WinterDone";
@@ -488,13 +525,23 @@ public class HarvestGameController : MonoBehaviour
         cropsTile.SetActive(false);
         action.SetActive(false);
     }
-    void EndOfStay()
+    void EndOfStray()
     {
-        SceneManager.LoadScene("EndOfStay");
+        skillRemoveFamily.SetActive(true);
+        endLineText.text = "STRAY";
+        endPanel.SetActive(true);
     }
     void EndOfStarve()
     {
-        SceneManager.LoadScene("EndOfStarve");
+        // got mercy to avoid flood;
+        endLineText.text = "STARVATION";
+        endPanel.SetActive(true);
+    }
+    void EndOfSuicide()
+    {
+        // got bravepoint to fight war;
+        endLineText.text = "SUICIDE";
+        endPanel.SetActive(true);
     }
     void SeedlingCut()
     {
@@ -518,6 +565,29 @@ public class HarvestGameController : MonoBehaviour
         foreach(GameObject c in cropList)
         {
             if (!c.activeSelf) cropRemain.Remove(c);
+        }
+    }
+    public void RemoveFamily()
+    {
+        if (peepNum == 5)
+        {
+            kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); peepNum--; return;
+        }
+        if (peepNum == 4)
+        {
+            kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); peepNum--; return;
+        }
+        if (peepNum == 3)
+        {
+            kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; return;
+        }
+        if (peepNum == 2)
+        {
+            wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); peepNum--; return;
+        }
+        if (peepNum == 1)
+        {
+            EndOfSuicide();
         }
     }
 }
