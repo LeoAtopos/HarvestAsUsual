@@ -17,9 +17,11 @@ public class HarvestGameController : MonoBehaviour
     public GameObject fieldUnrent;
     public GameObject crops;
     public List<GameObject> cropList;
+    public List<GameObject> cropRemain;
 
     public int money = 1000;
     public int gain = 0;
+    public int cropNum = 24;
     public float cropPrice = 1;
     public int gainPerCropBase = 50;
     public int moneyConsumePerPeepPerYear = 100;
@@ -38,6 +40,17 @@ public class HarvestGameController : MonoBehaviour
     public GameObject kid1;
     public GameObject kid2;
     public GameObject kid3;
+    public GameObject surviveNeed;
+    public int farmerNeed = -100;
+    public int wifeNeed = -100;
+    public int kid1Need = -100;
+    public int kid2Need = -100;
+    public int kid3Need = -100;
+    public TextMeshProUGUI farmerNeedText;
+    public TextMeshProUGUI wifeNeedText;
+    public TextMeshProUGUI kid1NeedText;
+    public TextMeshProUGUI kid2NeedText;
+    public TextMeshProUGUI kid3NeedText;
     public GameObject words;
     public GameObject merchant;
     public TextMeshProUGUI merchantLineText;
@@ -54,7 +67,6 @@ public class HarvestGameController : MonoBehaviour
     public Sprite autumnWord;
 
     public Sprite winterWord;
-    float wordShowTime = 2.0f;
 
     public GameObject grasshandler;
     public List<GameObject> grassList;
@@ -70,11 +82,12 @@ public class HarvestGameController : MonoBehaviour
     {
         money = 100;
         gain = 0;
-        cropPrice = 0.1f;
+        cropPrice = 1f;
         gainPerCropBase = 50;
         moneyConsumePerPeepPerYear = 100;
         rentPrice = 500;
         peepNum = 5;
+        cropNum = cropList.Count;
 
         family = new List<GameObject>();
         family.Add(farmer);
@@ -83,12 +96,20 @@ public class HarvestGameController : MonoBehaviour
         family.Add(kid2);
         family.Add(kid3);
 
+        farmerNeed = -100;
+        wifeNeed = -100;
+        kid1Need = -100;
+        kid2Need = -80;
+        kid3Need = -60;
+
         InitCropSpriteList();
         ShowSpringWord();
     }
     void InitCropSpriteList()
     {
-        foreach(GameObject g in cropList)
+        foreach (GameObject g in cropList) g.SetActive(true);
+        cropRemain = new List<GameObject>(cropList);
+        foreach (GameObject g in cropList)
         {
             cropSpriteList.Add(g.transform.GetChild(0).GetComponent<Image>());
         }
@@ -125,7 +146,13 @@ public class HarvestGameController : MonoBehaviour
         }
         moneyText.text = money.ToString();
         gainText.text = gain.ToString();
-    }
+
+        farmerNeedText.text = farmerNeed.ToString();
+        wifeNeedText.text = wifeNeed.ToString();
+        kid1NeedText.text = kid1Need.ToString();
+        kid2NeedText.text = kid2Need.ToString();
+        kid3NeedText.text = kid3Need.ToString();
+}
     void ShowSpringWord()
     {
         state = "SpringWord";
@@ -134,7 +161,11 @@ public class HarvestGameController : MonoBehaviour
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
+        foreach (GameObject g in cropList) g.SetActive(true);
+        cropRemain = new List<GameObject>(cropList);
+        cropNum = cropList.Count;
         familyHandle.SetActive(false);
+        surviveNeed.SetActive(false);
         words.SetActive(true);
         words.GetComponent<Image>().sprite = springWord;
         merchant.SetActive(false);
@@ -309,12 +340,7 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void HarvestDone()
     {
-        int gainHarvest = 0;
-        foreach(GameObject g in cropList)
-        {
-            gainHarvest += gainPerCropBase;
-        }
-        gain += gainHarvest;
+        gain += gainPerCropBase * cropNum;
         state = "Sell";
         statsBoard.SetActive(true);
         fieldBase.SetActive(true);
@@ -328,6 +354,7 @@ public class HarvestGameController : MonoBehaviour
         landLord.SetActive(false);
         grasshandler.SetActive(false);
         cropsTile.SetActive(true);
+        cropsTile.transform.DOScale(gain / 1000f, 0);
         action.SetActive(true);
         action.GetComponent<TextMeshProUGUI>().text = "Sell";
     }
@@ -377,6 +404,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(false);
         crops.SetActive(false);
         familyHandle.SetActive(true);
+        surviveNeed.SetActive(true);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(false);
@@ -387,28 +415,40 @@ public class HarvestGameController : MonoBehaviour
     }
     internal void SurviveDone()
     {
-        int i = 0;
-        while(i < family.Count)
-        {
-            if(money >= moneyConsumePerPeepPerYear)
-            {
-                money -= moneyConsumePerPeepPerYear;
-                i++;
-            }
-            else
-            {
-                if(i>0)
-                {
-                    family[i].SetActive(false);
-                    family.Remove(family[i]);
-                }
-                else
-                {
-                    EndOfStarve();
-                    break;
-                }
-            }
-        }
+        //int i = 0;
+        //while(i < family.Count)
+        //{
+        //    if(money >= moneyConsumePerPeepPerYear)
+        //    {
+        //        money -= moneyConsumePerPeepPerYear;
+        //        i++;
+        //    }
+        //    else
+        //    {
+        //        if(i>0)
+        //        {
+        //            family[i].SetActive(false);
+        //            family.Remove(family[i]);
+        //        }
+        //        else
+        //        {
+        //            EndOfStarve();
+        //            break;
+        //        }
+        //    }
+        //}
+
+        if (money + farmerNeed >= 0) money += farmerNeed;
+        else EndOfStarve();
+        if (money + wifeNeed >= 0) money += wifeNeed;
+        else { wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); };
+        if (money + kid1Need >= 0) money += kid1Need;
+        else { kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); };
+        if (money + kid2Need >= 0) money += kid2Need;
+        else { kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); };
+        if (money + kid3Need >= 0) money += kid3Need;
+        else { kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); };
+
         state = "Rent";
         statsBoard.SetActive(true);
         fieldBase.SetActive(false);
@@ -416,6 +456,7 @@ public class HarvestGameController : MonoBehaviour
         fieldUnrent.SetActive(true);
         crops.SetActive(false);
         familyHandle.SetActive(true);
+        surviveNeed.SetActive(false);
         words.SetActive(false);
         merchant.SetActive(false);
         landLord.SetActive(true);
@@ -457,16 +498,26 @@ public class HarvestGameController : MonoBehaviour
     }
     void SeedlingCut()
     {
-        int seedNum = cropList.Count;
-        int seedKilled = (int)Random.Range(1, (int)(seedNum * 0.2f));
-        List<GameObject> cropToBeKilledList = new List<GameObject>();
+        CutCrops(0.5f);
+        
+    }
+    void CutCrops(float p)
+    {
+        
+        int seedNum = cropRemain.Count;
+        int seedKilled = (int)Random.Range(1, (int)(seedNum * p));
+        cropNum -= seedKilled;
+        List<GameObject> cropToBeKilledList = new List<GameObject>(cropRemain);
         int i = 0;
         while (i < seedKilled)
         {
-            GameObject g =  cropList[i];
-            cropList.Remove(g);
-            g.SetActive(false);
+            int j = (int)Random.Range(1, cropToBeKilledList.Count);
+            cropToBeKilledList[j].SetActive(false);
             i++;
+        }
+        foreach(GameObject c in cropList)
+        {
+            if (!c.activeSelf) cropRemain.Remove(c);
         }
     }
 }
