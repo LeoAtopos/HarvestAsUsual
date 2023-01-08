@@ -218,7 +218,7 @@ public class HarvestGameController : MonoBehaviour
         cropsTile.SetActive(false);
         action.SetActive(false);
         if (isFlood && !dams.activeSelf) skillBuildDams.SetActive(true);
-        if (isWared) skillForWarlord.SetActive(true);
+        if (isWared && kid1.activeSelf && !isProtectByWarlord) skillForWarlord.SetActive(true);
     }
     void SpringFiledShowUp()
     {
