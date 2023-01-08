@@ -129,7 +129,7 @@ public class HarvestGameController : MonoBehaviour
         isArmyKidRemoved = false;
 
         endPanel.SetActive(false);
-        money = 100;
+        money = 300;
         gain = 0;
         cropPrice = 1f;
         gainPerCropBase = 50;
