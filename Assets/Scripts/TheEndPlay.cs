@@ -79,5 +79,6 @@ public class TheEndPlay : MonoBehaviour
     void TheEndPanel()
     {
         endPanel.SetActive(true);
+        EndListController.Instance.isTheEndGet = true;
     }
 }

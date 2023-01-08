@@ -132,5 +132,6 @@ public class TrueEndPlay : MonoBehaviour
     void TheEndPanel()
     {
         endPanel.SetActive(true);
+        EndListController.Instance.isTrueEndGet = true;
     }
 }

@@ -27,6 +27,12 @@ public class HarvestGameController : MonoBehaviour
 
     public GameObject endPanel;
     public TextMeshProUGUI endLineText;
+    public GameObject endPic;
+    public Image endPicSprite;
+    public Sprite suicidePic;
+    public Sprite starvePic;
+    public Sprite strayPic;
+    public Sprite dieInWarPic;
 
     public GameObject field;
     public GameObject fieldBase;
@@ -598,26 +604,34 @@ public class HarvestGameController : MonoBehaviour
     {
         skillRemoveFamily.SetActive(true);
         endLineText.text = "STRAY";
+        endPicSprite.sprite = strayPic;
         endPanel.SetActive(true);
+        EndListController.Instance.isBadEndStrayGet = true;
     }
     void EndOfStarve()
     {
         // got mercy to avoid flood;
         endLineText.text = "STARVATION";
+        endPicSprite.sprite = starvePic;
         endPanel.SetActive(true);
+        EndListController.Instance.isBadEndStarveGet = true;
     }
     void EndOfSuicide()
     {
         // got bravepoint to fight war;
         endLineText.text = "SUICIDE";
+        endPicSprite.sprite = suicidePic;
         endPanel.SetActive(true);
+        EndListController.Instance.isBadEndSuicideGet = true;
     }
     void EndOfWar()
     {
         skillForWarlord.SetActive(true);
         endLineText.text = "DIE BY WAR";
+        endPicSprite.sprite = dieInWarPic;
         endPanel.SetActive(true);
         isWared = true;
+        EndListController.Instance.isBadEndDieInWarGet = true;
     }
     void SeedlingCut()
     {
