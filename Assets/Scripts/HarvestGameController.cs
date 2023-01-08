@@ -21,9 +21,11 @@ public class HarvestGameController : MonoBehaviour
     public GameObject endPanel;
     public TextMeshProUGUI endLineText;
 
+    public GameObject field;
     public GameObject fieldBase;
     public GameObject fieldDone;
     public GameObject fieldUnrent;
+    public GameObject dams;
     public GameObject crops;
     public List<GameObject> cropList;
     public List<GameObject> cropRemain;
@@ -47,6 +49,8 @@ public class HarvestGameController : MonoBehaviour
     public GameObject farmer;
     public GameObject wife;
     public GameObject kid1;
+    public Sprite kidSad;
+    public Sprite kidBoy;
     public GameObject kid2;
     public GameObject kid3;
     public GameObject surviveNeed;
@@ -74,6 +78,8 @@ public class HarvestGameController : MonoBehaviour
     public Sprite springWord;
     public Sprite summerWord;
     public Sprite autumnWord;
+    public Sprite floodWord;
+    public Sprite warWord;
 
     public Sprite winterWord;
 
@@ -85,6 +91,11 @@ public class HarvestGameController : MonoBehaviour
 
     public GameObject skillboard;
     public GameObject skillRemoveFamily;
+    public GameObject skillBuildDams;
+    bool isFlood = false;
+    public GameObject skillForWarlord;
+    bool isProtectByWarlord = false;
+    bool isWared = false;
 
     public AudioSource flickSound;
 
@@ -117,13 +128,16 @@ public class HarvestGameController : MonoBehaviour
         family.Add(kid2);
         family.Add(kid3);
 
-
         farmerNeed = -100;
         wifeNeed = -100;
         kid1Need = -100;
         kid2Need = -80;
         kid3Need = -60;
 
+        isFlood = false;
+        isProtectByWarlord = false;
+        dams.SetActive(false);
+        skillBuildDams.SetActive(false);
         InitCropSpriteList();
         ShowSpringWord();
     }
@@ -151,11 +165,15 @@ public class HarvestGameController : MonoBehaviour
                 case "SpringDone":
                     ShowSummerWord(); break;
                 case "SummerWord":
+                    CheckFlood(); break;
+                case "FloodWord":
                     SummerFiledShowUp(); break;
                 case "SummerDone":
                     ShowAutumnWord(); break;
                 case "AutumnWord":
-                    AutumnFiledShowUp(); break;
+                    CheckWar(); break;
+                case "WarWord":
+                    EndOfWar();break;
                 case "AutumnDone":
                     ShowWinterWord(); break;
                 case "WinterWord":
@@ -174,12 +192,15 @@ public class HarvestGameController : MonoBehaviour
         kid1NeedText.text = kid1Need.ToString();
         kid2NeedText.text = kid2Need.ToString();
         kid3NeedText.text = kid3Need.ToString();
+        if (isProtectByWarlord && kid1.activeSelf) kid1.GetComponent<Image>().sprite = kidSad;
+        else kid1.GetComponent<Image>().sprite = kidBoy;
 }
     void ShowSpringWord()
     {
         skillboard.SetActive(false);
         state = "SpringWord";
         statsBoard.SetActive(false);
+        field.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -196,12 +217,15 @@ public class HarvestGameController : MonoBehaviour
         grasshandler.SetActive(false);
         cropsTile.SetActive(false);
         action.SetActive(false);
+        if (isFlood && !dams.activeSelf) skillBuildDams.SetActive(true);
+        if (isWared) skillForWarlord.SetActive(true);
     }
     void SpringFiledShowUp()
     {
         skillboard.SetActive(true);
         state = "Plough";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -222,6 +246,7 @@ public class HarvestGameController : MonoBehaviour
         flickSound.Play();
         state = "Sow";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -242,6 +267,7 @@ public class HarvestGameController : MonoBehaviour
         flickSound.Play();
         state = "SpringDone";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -261,6 +287,7 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(false);
         state = "SummerWord";
         statsBoard.SetActive(false);
+        field.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -281,6 +308,7 @@ public class HarvestGameController : MonoBehaviour
 
         state = "Water";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -302,6 +330,7 @@ public class HarvestGameController : MonoBehaviour
         flickSound.Play();
         state = "Weed";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -323,6 +352,7 @@ public class HarvestGameController : MonoBehaviour
         flickSound.Play();
         state = "SummerDone";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -341,6 +371,7 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(false);
         state = "AutumnWord";
         statsBoard.SetActive(false);
+        field.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -359,6 +390,7 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(true);
         state = "Harvest";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(true);
         fieldUnrent.SetActive(false);
@@ -381,6 +413,7 @@ public class HarvestGameController : MonoBehaviour
         gain += gainPerCropBase * cropNum;
         state = "Sell";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -406,6 +439,7 @@ public class HarvestGameController : MonoBehaviour
         
         state = "AutumnDone";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -423,6 +457,7 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(false);
         state = "WinterWord";
         statsBoard.SetActive(false);
+        field.SetActive(false);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -441,6 +476,7 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(true);
         state = "Survive";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -485,6 +521,7 @@ public class HarvestGameController : MonoBehaviour
 
         state = "Rent";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(false);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(true);
@@ -513,6 +550,7 @@ public class HarvestGameController : MonoBehaviour
 
         state = "WinterDone";
         statsBoard.SetActive(true);
+        field.SetActive(true);
         fieldBase.SetActive(true);
         fieldDone.SetActive(false);
         fieldUnrent.SetActive(false);
@@ -543,16 +581,30 @@ public class HarvestGameController : MonoBehaviour
         endLineText.text = "SUICIDE";
         endPanel.SetActive(true);
     }
+    void EndOfWar()
+    {
+        skillForWarlord.SetActive(true);
+        endLineText.text = "DIE BY WAR";
+        endPanel.SetActive(true);
+        isWared = true;
+    }
     void SeedlingCut()
     {
-        CutCrops(0.5f);
+        CutCrops(0.3f,true);
         
     }
-    void CutCrops(float p)
+    void CutCrops(float p, bool isRandom)
     {
-        
         int seedNum = cropRemain.Count;
-        int seedKilled = (int)Random.Range(1, (int)(seedNum * p));
+        int seedKilled = 0;
+        if (isRandom)
+        {
+            seedKilled = (int)Random.Range(1, (int)(seedNum * p));
+        }
+        else
+        {
+            seedKilled = (int)(seedNum * p);
+        }
         cropNum -= seedKilled;
         List<GameObject> cropToBeKilledList = new List<GameObject>(cropRemain);
         int i = 0;
@@ -579,7 +631,7 @@ public class HarvestGameController : MonoBehaviour
         }
         if (peepNum == 3)
         {
-            kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; return;
+            kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; isProtectByWarlord = false; skillForWarlord.SetActive(false); return;
         }
         if (peepNum == 2)
         {
@@ -589,5 +641,97 @@ public class HarvestGameController : MonoBehaviour
         {
             EndOfSuicide();
         }
+    }
+    public void BuildDams()
+    {
+        dams.SetActive(true);
+        skillBuildDams.SetActive(false);
+    }
+    public void WorkForWarlord()
+    {
+        isProtectByWarlord = true;
+        skillForWarlord.SetActive(false);
+    }
+    void CheckFlood()
+    {
+        if(!dams.activeSelf)
+        {
+            int r = Random.Range(0, 2);
+            Debug.Log(r);
+            if (r > 0)
+            {
+                ShowFloodWord();
+                isFlood = true;
+            }
+            else
+            {
+                SummerFiledShowUp();
+            }
+        }
+        else
+        {
+            SummerFiledShowUp();
+        }
+    }
+    void ShowFloodWord()
+    {
+        skillboard.SetActive(false);
+        state = "FloodWord";
+        statsBoard.SetActive(false);
+        field.SetActive(false);
+        fieldBase.SetActive(false);
+        fieldDone.SetActive(false);
+        fieldUnrent.SetActive(false);
+        crops.SetActive(false);
+        familyHandle.SetActive(false);
+        surviveNeed.SetActive(false);
+        words.SetActive(true);
+        words.GetComponent<Image>().sprite = floodWord;
+        merchant.SetActive(false);
+        landLord.SetActive(false);
+        grasshandler.SetActive(false);
+        cropsTile.SetActive(false);
+        action.SetActive(false);
+        CutCrops(0.5f, false);
+    }
+    void CheckWar()
+    {
+        if(!isProtectByWarlord)
+        {
+            int r = Random.Range(0, 3);
+            Debug.Log(r);
+            if (r > 1)
+            {
+                ShowWarWord();
+            }
+            else
+            {
+                AutumnFiledShowUp();
+            }
+        }
+        else
+        {
+            AutumnFiledShowUp();
+        }
+    }
+    void ShowWarWord()
+    {
+        skillboard.SetActive(false);
+        state = "WarWord";
+        statsBoard.SetActive(false);
+        field.SetActive(false);
+        fieldBase.SetActive(false);
+        fieldDone.SetActive(false);
+        fieldUnrent.SetActive(false);
+        crops.SetActive(false);
+        familyHandle.SetActive(false);
+        surviveNeed.SetActive(false);
+        words.SetActive(true);
+        words.GetComponent<Image>().sprite = warWord;
+        merchant.SetActive(false);
+        landLord.SetActive(false);
+        grasshandler.SetActive(false);
+        cropsTile.SetActive(false);
+        action.SetActive(false);
     }
 }
