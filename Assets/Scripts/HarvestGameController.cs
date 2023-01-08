@@ -18,6 +18,9 @@ public class HarvestGameController : MonoBehaviour
 
     public static HarvestGameController Instance{get => instance;}
 
+    public int yearCountDown = 5;
+    public TextMeshProUGUI yearCountText;
+
     public GameObject endPanel;
     public TextMeshProUGUI endLineText;
 
@@ -105,6 +108,8 @@ public class HarvestGameController : MonoBehaviour
     }
     void Start()
     {
+        yearCountDown = 5;
+
         endPanel.SetActive(false);
         money = 100;
         gain = 0;
@@ -179,13 +184,14 @@ public class HarvestGameController : MonoBehaviour
                 case "WinterWord":
                     WinterFiledShowUp(); break;
                 case "WinterDone":
-                    ShowSpringWord(); break;
+                    ShowSpringWord(); yearCountDown--; break;
                 default:
                     break;
             }
         }
         moneyText.text = money.ToString();
         gainText.text = gain.ToString();
+        yearCountText.text = yearCountDown.ToString();
 
         farmerNeedText.text = farmerNeed.ToString();
         wifeNeedText.text = wifeNeed.ToString();
