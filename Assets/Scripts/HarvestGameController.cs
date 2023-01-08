@@ -19,7 +19,11 @@ public class HarvestGameController : MonoBehaviour
     public static HarvestGameController Instance{get => instance;}
 
     public int yearCountDown = 5;
+    public TextMeshProUGUI yearCountDownWordsText;
     public TextMeshProUGUI yearCountText;
+    public bool isFinal = false;
+    public bool isFinalSell = false;
+    public bool isArmyKidRemoved = false;
 
     public GameObject endPanel;
     public TextMeshProUGUI endLineText;
@@ -50,6 +54,7 @@ public class HarvestGameController : MonoBehaviour
     public List<GameObject> family;
     public GameObject familyHandle;
     public GameObject farmer;
+    public GameObject farmerLine;public TextMeshProUGUI farmerLineText;
     public GameObject wife;
     public GameObject kid1;
     public Sprite kidSad;
@@ -69,8 +74,10 @@ public class HarvestGameController : MonoBehaviour
     public TextMeshProUGUI kid3NeedText;
     public GameObject words;
     public GameObject merchant;
+    public GameObject merchantLine;
     public TextMeshProUGUI merchantLineText;
     public GameObject landLord;
+    public GameObject landLordLine;
     public TextMeshProUGUI landLordLineText;
     public GameObject cropsTile;
 
@@ -109,6 +116,11 @@ public class HarvestGameController : MonoBehaviour
     void Start()
     {
         yearCountDown = 5;
+        yearCountDownWordsText.color = new Color(1, 1, 1);
+        yearCountText.color = new Color(1, 1, 1);
+        CheckYear();
+        isFinal = false;
+        isArmyKidRemoved = false;
 
         endPanel.SetActive(false);
         money = 100;
@@ -125,6 +137,7 @@ public class HarvestGameController : MonoBehaviour
         kid1.SetActive(true); kid1NeedText.enabled = true;
         wife.SetActive(true); wifeNeedText.enabled = true;
         farmer.SetActive(true); farmerNeedText.enabled = true;
+        farmerLine.SetActive(false);
 
         family = new List<GameObject>();
         family.Add(farmer);
@@ -161,34 +174,39 @@ public class HarvestGameController : MonoBehaviour
     }
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(!isFinal)
         {
-            switch(state)
+            if (Input.GetMouseButtonDown(0))
             {
-                case "SpringWord":
-                    SpringFiledShowUp(); break;
-                case "SpringDone":
-                    ShowSummerWord(); break;
-                case "SummerWord":
-                    CheckFlood(); break;
-                case "FloodWord":
-                    SummerFiledShowUp(); break;
-                case "SummerDone":
-                    ShowAutumnWord(); break;
-                case "AutumnWord":
-                    CheckWar(); break;
-                case "WarWord":
-                    EndOfWar();break;
-                case "AutumnDone":
-                    ShowWinterWord(); break;
-                case "WinterWord":
-                    WinterFiledShowUp(); break;
-                case "WinterDone":
-                    ShowSpringWord(); yearCountDown--; break;
-                default:
-                    break;
+                switch (state)
+                {
+                    case "SpringWord":
+                        CheckYear(); SpringFiledShowUp(); break;
+                    case "SpringDone":
+                        ShowSummerWord(); break;
+                    case "SummerWord":
+                        CheckFlood(); break;
+                    case "FloodWord":
+                        SummerFiledShowUp(); break;
+                    case "SummerDone":
+                        ShowAutumnWord(); break;
+                    case "AutumnWord":
+                        CheckWar(); break;
+                    case "WarWord":
+                        EndOfWar(); break;
+                    case "AutumnDone":
+                        ShowWinterWord(); break;
+                    case "WinterWord":
+                        WinterFiledShowUp(); break;
+                    case "WinterDone":
+                        yearCountDown--; ShowSpringWord(); break;
+                    default:
+                        break;
+                }
             }
         }
+        if (isFinalSell && state == "FinalSellDone")
+            if (Input.GetMouseButtonDown(0)) { state = "FinalPlot"; FarmerLastLine();}
         moneyText.text = money.ToString();
         gainText.text = gain.ToString();
         yearCountText.text = yearCountDown.ToString();
@@ -417,6 +435,10 @@ public class HarvestGameController : MonoBehaviour
         skillboard.SetActive(true);
         flickSound.Play();
         gain += gainPerCropBase * cropNum;
+        if (yearCountDown == 0)
+        {
+            FinalYear();
+        }
         state = "Sell";
         statsBoard.SetActive(true);
         field.SetActive(true);
@@ -442,8 +464,11 @@ public class HarvestGameController : MonoBehaviour
         flickSound.Play();
         money += (int)(gain * cropPrice);
         gain = 0;
-        
-        state = "AutumnDone";
+
+        if (isFinalSell)
+            state = "FinalSellDone";
+        else
+            state = "AutumnDone";
         statsBoard.SetActive(true);
         field.SetActive(true);
         fieldBase.SetActive(true);
@@ -627,36 +652,45 @@ public class HarvestGameController : MonoBehaviour
     }
     public void RemoveFamily()
     {
-        if (peepNum == 5)
+        if(!isFinal)
         {
-            kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); peepNum--; return;
-        }
-        if (peepNum == 4)
-        {
-            kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); peepNum--; return;
-        }
-        if (peepNum == 3)
-        {
-            kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; isProtectByWarlord = false; skillForWarlord.SetActive(false); return;
-        }
-        if (peepNum == 2)
-        {
-            wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); peepNum--; return;
-        }
-        if (peepNum == 1)
-        {
-            EndOfSuicide();
+            if (peepNum == 5)
+            {
+                kid3.SetActive(false); kid3NeedText.enabled = false; family.Remove(kid3); peepNum--; return;
+            }
+            if (peepNum == 4)
+            {
+                kid2.SetActive(false); kid2NeedText.enabled = false; family.Remove(kid2); peepNum--; return;
+            }
+            if (peepNum == 3)
+            {
+                CheckIfArmyKid(); kid1.SetActive(false); kid1NeedText.enabled = false; family.Remove(kid1); peepNum--; isProtectByWarlord = false; skillForWarlord.SetActive(false); return;
+            }
+            if (peepNum == 2)
+            {
+                wife.SetActive(false); wifeNeedText.enabled = false; family.Remove(wife); peepNum--; return;
+            }
+            if (peepNum == 1)
+            {
+                EndOfSuicide();
+            }
         }
     }
     public void BuildDams()
     {
-        dams.SetActive(true);
-        skillBuildDams.SetActive(false);
+        if (!isFinal)
+        {
+            dams.SetActive(true);
+            skillBuildDams.SetActive(false);
+        }
     }
     public void WorkForWarlord()
     {
-        isProtectByWarlord = true;
-        skillForWarlord.SetActive(false);
+        if(!isFinal)
+        {
+            isProtectByWarlord = true;
+            skillForWarlord.SetActive(false);
+        }
     }
     void CheckFlood()
     {
@@ -739,5 +773,84 @@ public class HarvestGameController : MonoBehaviour
         grasshandler.SetActive(false);
         cropsTile.SetActive(false);
         action.SetActive(false);
+    }
+    void CheckYear()
+    {
+        if (yearCountDown == 1)
+        {
+            yearCountDownWordsText.text = "BIG FAT RICH HARVEST IN         YEAR";
+            yearCountText.color = new Color(1, 1, 0);
+        }
+        if(yearCountDown == 0)
+        {
+            yearCountDownWordsText.text = "BIG FAT RICH HARVEST IN AUTUMN";
+            yearCountDownWordsText.color = new Color(1, 1, 0);
+            yearCountText.enabled = false;
+        }
+    }
+    void FinalYear()
+    {
+        gain += 2000;
+        cropPrice = 0.1f;
+        state = "FinalPlot";
+        isFinal = true;
+        Invoke("FarmerShock", 2.5f);
+        //Invoke("HideMerchantLine", 3f);
+    }
+    void FarmerShock()
+    {
+        farmerLineText.text = "What?!";
+        farmerLine.SetActive(true);
+        Invoke("MerchantThreat", 3.5f);
+    }
+    void HideMerchantLine()
+    {
+        merchantLine.SetActive(false);
+    }
+    void MerchantThreat()
+    {
+        merchantLineText.text = "It's BIG FAT RICH Harvest";
+        merchantLine.GetComponent<RectTransform>().DOSizeDelta(new Vector2(400, 300), 0, false);
+        merchantLine.SetActive(true);
+        Invoke("HideMerchantLine", 5f);
+        Invoke("MerchantThreat1", 6f);
+    }
+    void MerchantThreat1()
+    {
+        merchantLineText.text = "Too Much Gains";
+        merchantLine.SetActive(true);
+        Invoke("HideMerchantLine", 3f);
+        Invoke("MerchantThreat2", 4f);
+    }
+    void MerchantThreat2()
+    {
+        merchantLineText.text = cropPrice.ToString()+"$, Take it or leave it!";
+        merchantLine.SetActive(true);
+        Invoke("FinalSell", 2.5f);
+    }
+    void FinalSell()
+    {
+        isFinalSell = true;
+        Invoke("HideFarmerLine", 2f);
+    }
+    void HideFarmerLine()
+    {
+        farmerLine.SetActive(false);
+    }
+    void FarmerLastLine()
+    {
+        farmerLineText.text = "DOOMED";
+        farmerLine.SetActive(true);
+        Invoke("CutSceneTheEnd", 3.5f);
+    }
+
+    void CheckIfArmyKid()
+    {
+        if (isProtectByWarlord) isArmyKidRemoved = true;
+    }
+    void CutSceneTheEnd()
+    {
+        if(isArmyKidRemoved) SceneManager.LoadScene("TrueEnd");
+        else SceneManager.LoadScene("TheEnd");
     }
 }

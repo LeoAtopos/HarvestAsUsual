@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndOfStarve.unity
     guid: 6e4e91e2b6f9647ffa36284fb5659add
+  - enabled: 1
+    path: Assets/Scenes/TheEnd.unity
+    guid: 4246c46217f5b4c33a9781b680785cd5
+  - enabled: 1
+    path: Assets/Scenes/TrueEnd.unity
+    guid: fa48337a4ea4a4a7db295f8d8c8d9c79
   m_configObjects: {}
